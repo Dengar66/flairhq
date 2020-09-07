@@ -56,7 +56,11 @@ module.exports = {
       var promises = [];
       promises.push(user.save());
       promises.push(Event.create({type: "flairTextChange", user: req.user.name,content: "Changed " + user.name + "'s flair to " + relevant_flair}));
-      var pmContent = 'Your application for ' + Flairs.formattedName(app.flair) + ' flair on /r/' + app.sub + ' has been approved.';
+      var formattedFlair = Flairs.formattedName(app.flair)
+      var pmContent = 'Your application for ' + formattedFlair + ' flair on /r/' + app.sub + ' has been approved.';
+      if (formattedFlair === "Poke Ball") {
+        pmContent = pmContent + ' Reminder that any trade posting involving shiny or event Pokemon must be accompanied by full details as outlined in Rule 3.'
+      }
       promises.push(Reddit.sendPrivateMessage(refreshToken, 'FlairHQ Notification', pmContent, user.name));
       promises.push(Application.destroy({id: req.allParams().id}));
       await* promises;
